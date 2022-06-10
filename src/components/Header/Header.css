@@ -26,7 +26,7 @@
   text-align: left;
   color: #000000;
   text-decoration: none;
-  transition: opacity 0.3 ease;
+  transition: opacity 0.5s ease;
 }
 .header__navigation-link:hover {
   opacity: 0.8;
