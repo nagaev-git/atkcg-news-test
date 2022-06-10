@@ -112,6 +112,7 @@
   box-sizing: border-box;
   background-color: #000000;
   border: none;
+  cursor: pointer;
   border-radius: 3px;
   color: #ffffff;
   margin: 0;

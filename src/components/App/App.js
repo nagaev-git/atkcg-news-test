@@ -10,28 +10,37 @@ import NewsApi from "../../utils/api/NewsApi";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
 function App() {
+  const [news, setnews] = useState([]);
   const [loggedIn, setLoggedIn] = useState(true);
   const [isBadRequest, setIsBadRequest] = useState(false);
-  const [news, setnews] = useState([]);
-  const history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    initialNewsCheck();
+  }, [isLoading]);
+
+  const history = useHistory();
   useEffect(() => {
     loginCheck();
   }, []);
 
-  useEffect(() => {
-    initialNewsCheck();
-  }, []);
-
   const initialNewsCheck = () => {
-    NewsApi.getNews()
-      .then((newsData) => {
-        console.log(newsData);
-        setnews(newsData);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setIsLoading(true);
+    const initialNews = JSON.parse(localStorage.getItem("initialNews"));
+    if (initialNews) {
+      setnews(initialNews);
+      setIsLoading(false);
+    } else {
+      NewsApi.getNews()
+        .then((newsData) => {
+          setnews(newsData.data);
+          localStorage.setItem("initialNews", JSON.stringify(newsData.data));
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const loginCheck = () => {
@@ -79,7 +88,7 @@ function App() {
             />
           </Route>
           <Route exact path="/news">
-            <News news={news} />
+            <News news={news} isLoading={isLoading} />
           </Route>
           <ProtectedRoute
             exact
