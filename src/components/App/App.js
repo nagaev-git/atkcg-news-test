@@ -6,16 +6,33 @@ import Login from "../Login/Login";
 import Profile from "../Profile/Profile";
 import News from "../News/News";
 import PageNotFound from "../PageNotFound/PageNotFound";
+import NewsApi from "../../utils/api/NewsApi";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(true);
   const [isBadRequest, setIsBadRequest] = useState(false);
+  const [news, setnews] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
     loginCheck();
   }, []);
+
+  useEffect(() => {
+    initialNewsCheck();
+  }, []);
+
+  const initialNewsCheck = () => {
+    NewsApi.getNews()
+      .then((newsData) => {
+        console.log(newsData);
+        setnews(newsData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const loginCheck = () => {
     const user = localStorage.getItem("user");
@@ -62,7 +79,7 @@ function App() {
             />
           </Route>
           <Route exact path="/news">
-            <News />
+            <News news={news} />
           </Route>
           <ProtectedRoute
             exact
